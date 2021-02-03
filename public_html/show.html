@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Show</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="CSS/styles.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+      
+    </head>
+    <body>
+               <!-- Image and text -->
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand  m-auto" href="index.html">
+        <img src="https://toppng.com/uploads/preview/netflix-logo-png-11593869495odtwahwmzn.png" alt="" width="40" height="34" class="d-inline-block align-top">
+       Personal Movie Bucket List ;
+      </a>
+    </div>
+  </nav>
+      
+    <center><h1>your current bucket list</h1></center>
+    <center><h1>Show Data</h1></center>
+    <center><input id="rollno" maxlength="50" placeholder="Genre you want to watch" name="rollno" type="text" /><br><br>
+        <input type="button" value="SHOW DATA" onclick="showData();"/></center>
+    <h2 id="show"></h2>
+    <script>
+         function createGETRequest(token, dbname, relationName, jsonObjStr) {
+    var value1 = "{\n"
+            + "\"token\" : \""
+            + token
+            + "\",\n" + "\"cmd\" : \"GET\",\n"
+            + "\"dbName\": \""
+            + dbname
+            + "\",\n"
+            + "\"rel\" : \""
+            + relationName
+            + "\",\n"
+            + "\"jsonStr\":\n"
+            + jsonObjStr
+            + "\n"
+            + "}";
+    return value1;
+}
+
+
+        function executeCommand(reqString, dbBaseUrl, apiEndPointUrl) {
+            var url = dbBaseUrl + apiEndPointUrl;
+            var jsonObj;
+            $.post(url, reqString, function (result) {
+                jsonObj = JSON.parse(result);
+            }).fail(function (result) {
+                var dataJsonObj = result.responseText;
+                jsonObj = JSON.parse(dataJsonObj);
+            });
+            return jsonObj;
+        }
+        function showData(){
+            var token = "90935545|-31948800673694547|90931602";
+            var dbname = "SAMPLE";
+            var relationName = "EMP-REL";
+            var roll = document.getElementById("rollno").value;
+            var jsonStr = {
+                empName: roll
+            };
+            var reqString = createGETRequest(token, dbname, relationName, JSON.stringify(jsonStr));
+            alert(reqString);
+            jQuery.ajaxSetup({async: false});
+            var resultObj = executeCommand(reqString,
+                    "http://api.login2explore.com:5577", "/api/irl");
+            jQuery.ajaxSetup({async: true});
+            
+            var data = JSON.stringify(resultObj);
+            
+            var res = data.split("\"");
+            var mainContainer = document.getElementById("show");
+            mainContainer.innerHTML = "            movie Name : " + res[6].replace("\\","") + "             Genre : " + res[10].replace("\\","")
+                + "               release year : " + res[14].replace("\\", ""); 
+
+            
+            
+        }
+    </script>
+            
+        
+</body>
+</html>
+
+
